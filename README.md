@@ -1,15 +1,14 @@
-# Team: CodeCarnivores 🦁
 # SentinelZero: The Guardian Extension 🛡️
 
-<img width="100%" alt="SentinelZero Banner" src="https://github.com/user-attachments/assets/PLACEHOLDER_BANNER_LINK" />
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/60abfc92-0613-48de-a8af-599a6e1bf2ce" />
 
 ## Problem Statement
 
-Rural and elderly banking users are increasingly targeted by **"Digital Arrest"** scams and **Vishing** (Voice Phishing). Scammers use psychological pressure to coerce victims into transferring money to "Mule Accounts" (accounts used for laundering).
+- Rural and elderly banking users are increasingly targeted by **"Digital Arrest"** scams and **Vishing** (Voice Phishing). Scammers use psychological pressure to coerce victims into transferring money to "Mule Accounts" (accounts used for laundering).
 
-Existing bank security focuses on *login* (passwords/OTPs) but fails to detect **psychological coercion** during the actual transaction. Once the OTP is shared, the money is gone.
+- Existing bank security focuses on *login* (passwords/OTPs) but fails to detect **psychological coercion** during the actual transaction. Once the OTP is shared, the money is gone.
 
-There is a critical need for a **Client-Side Guardian** that sits *on top* of the banking interface to detect "Mule Accounts" and "High-Hesitation" behavior in real-time.
+- There is a critical need for a **Client-Side Guardian** that sits *on top* of the banking interface to detect "Mule Accounts" and "High-Hesitation" behavior in real-time.
 
 ---
 
@@ -45,28 +44,7 @@ SentinelZero uses a **"Guardian Extension" Architecture**. Unlike bank-side syst
 
 ### Architecture & Workflow:
 
-```mermaid
-graph LR
-    %% 16:9 Ratio Setup
-    User(🧓<br>Elderly User) -->|Visits Bank| Ext[🧩 Extension<br>Activates];
-    
-    subgraph "Client-Side Guardian"
-        Ext -->|Monitor| Mouse(🖱️ Mouse Jitter);
-        Ext -->|Monitor| Keys(⌨️ Typing Speed);
-    end
-    
-    Mouse & Keys -->|Data| AI{🤖 AI Engine};
-    
-    AI -->|Check Account| DB[(🗄️ Mule Database)];
-    
-    DB -- Match Found! --> Block{🛑 BLOCK};
-    AI -- High Hesitation --> Block;
-    
-    Block -->|Trigger| Popup[📱 Sahayak<br>Warning Popup];
-    
-    style Block fill:#ff9999,stroke:#cc0000,stroke-width:2px
-    style Popup fill:#e6ffe6,stroke:#009900,stroke-width:2px,stroke-dasharray: 5 5
-```
+<img width="2752" height="1536" alt="Image" src="https://github.com/user-attachments/assets/86089cdc-728b-4d40-a880-e8faebbdd300" />
 
 1.  **User Visits Bank Site:** The extension (`content.js`) activates automatically on known banking URLs.
 2.  **Behavioral Monitoring:** The system tracks non-PII metrics like mouse jitter and typing delays (Hesitation Index).
@@ -93,11 +71,11 @@ graph LR
 
 ### 1. The "Sahayak" Intelligence Report (Intervention)
 *The extension overlays the banking site to warn the user of "High Hesitation" (Coercion Risk) and blocks the transfer.*
-<img width="100%" alt="Sahayak Intelligence Report" src="https://github.com/user-attachments/assets/PASTE_YOUR_LINK_FOR_image_aa38de.jpg" />
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/7793a226-3d93-41f6-8538-4c08aa219200" />
 
 ### 2. Mule Account Detection
 *Real-time flagging of a suspicious account number before the user can click "Pay".*
-<img width="100%" alt="Mule Detection" src="https://github.com/user-attachments/assets/PASTE_YOUR_LINK_FOR_image_a8d47e.png"/>
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/cc86c64a-639f-4f14-9834-8a2268d32075" />
 
 ---
 
@@ -113,7 +91,7 @@ python server.py
 1.  Open Chrome and navigate to `chrome://extensions/`.
 2.  Toggle **Developer Mode** (Top Right corner).
 3.  Click the **Load Unpacked** button.
-4.  Select the `codecarnivores-main` folder from your system.
+4.  Select the `SentinelZero` folder from your system.
 5.  Open the included `index.html` (Bank Simulation) in your browser to test the intervention logic live.
 
 ---
