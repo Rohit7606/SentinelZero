@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sahayak Intelligence Center</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- THEME SETTINGS --- */
+        body { 
+            background-color: #0b0e14; color: white; 
+            font-family: 'Rajdhani', sans-serif; margin: 0; overflow: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #1a1f2e 0%, #0b0e14 100%);
+            transition: background 0.5s ease;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            height: 60px; padding: 0 30px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative; z-index: 10;
+        }
+
+        h1 { margin: 0; font-weight: 700; letter-spacing: 2px; color: #4ade80; text-transform: uppercase; font-size: 24px; }
+        
+        .controls { display: flex; gap: 10px; align-items: center; }
+        
+        .btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc; padding: 6px 12px; cursor: pointer;
+            font-family: 'Roboto', sans-serif; font-size: 12px; border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .btn:hover, .btn.active { background: #4ade80; color: black; border-color: #4ade80; font-weight: bold;}
+        .btn-reset { border-color: #f97316; color: #f97316; }
+        .btn-reset:hover { background: #f97316; color: white; }
+
+        /* --- LAYOUT --- */
+        .main-container {
+            display: flex; height: calc(100vh - 60px);
+            position: relative;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 320px; padding: 20px;
+            background: rgba(11, 14, 20, 0.9);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex; flex-direction: column; gap: 20px;
+            z-index: 5;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px;
+            border-left: 3px solid #4ade80; transition: all 0.3s;
+        }
+        .stat-label { font-size: 12px; color: #888; text-transform: uppercase; }
+        .stat-val { font-size: 28px; font-weight: bold; margin-top: 5px; }
+
+        /* RECEIPT STYLES */
+        .receipt-card {
+            background: white; color: black; padding: 15px; border-radius: 8px;
+            font-family: 'Roboto', sans-serif; border-top: 5px solid #d32f2f;
+            animation: slideIn 0.5s ease;
+        }
+        .receipt-title { font-weight: bold; font-size: 14px; margin-bottom: 10px; color: #333; text-transform: uppercase; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+        .receipt-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; }
+        .receipt-risk { background: #fee2e2; color: #991b1b; padding: 8px; border-radius: 4px; font-size: 12px; margin-top: 10px; border: 1px solid #fca5a5; font-weight: bold; line-height: 1.4;}
+        .receipt-actions { margin-top: 15px; display: flex; gap: 5px; }
+        .btn-receipt { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; text-transform: uppercase;}
+        .btn-close { background: #333; color: white; }
+        .btn-ignore { background: #eee; color: #333; }
+        
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* CAPTION BOX */
+        #caption-box {
+            margin-top: auto; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #444; padding: 20px; border-radius: 8px;
+            min-height: 140px; font-family: 'Roboto', sans-serif; font-size: 16px;
+            line-height: 1.6; color: #4ade80;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+            border-left: 4px solid #4ade80;
+        }
+        .caption-header { font-size: 11px; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;}
+
+        /* GRAPH CONTAINER */
+        #network-graph {
+            flex-grow: 1; height: 100%;
+            background: transparent;
+        }
+
+        /* --- RED MODE --- */
+        body.alert-mode { background-image: radial-gradient(circle at 50% 50%, #2a0a0a 0%, #000 100%); }
+        body.alert-mode h1 { color: #ef4444; text-shadow: 0 0 10px red; }
+        body.alert-mode .stat-box { border-left-color: #ef4444; background: rgba(50, 10, 10, 0.5); }
+        body.alert-mode #caption-box { color: #ef4444; border-color: #ef4444; text-shadow: 0 0 5px red; border-left-color: #ef4444; }
+        
+        .pulse-badge {
+            background: #4ade80; color: black; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;
+            margin-left: 10px; vertical-align: middle;
+        }
+        body.alert-mode .pulse-badge { background: #ef4444; color: white; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 class="logo-text">Sahayak <span>Shield</span> <span id="status-badge" class="pulse-badge">SYSTEM ACTIVE</span></h1>
+        
+        <div class="controls">
+            <button class="btn btn-reset" onclick="resetSystem()">⟳ RESTART DEMO</button>
+            <div style="width: 20px;"></div>
+            <span style="font-size:12px; color:#666; margin-right:5px;">AUDIO:</span>
+            <button class="btn active" onclick="setLang('en')">ENG</button>
+            <button class="btn" onclick="setLang('hi')">HIN</button>
+            <button class="btn" onclick="setLang('ta')">TAM</button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div id="default-stats">
+                <div class="stat-box" id="stat-threat">
+                    <div class="stat-label">Security Status</div>
+                    <div class="stat-val">SECURE</div>
+                </div>
+                <div style="height: 15px;"></div>
+                <div class="stat-box" id="stat-nodes">
+                    <div class="stat-label">Network Activity</div>
+                    <div class="stat-val">Monitoring</div>
+                </div>
+            </div>
+
+            <div id="receipt-container"></div>
+            
+            <div id="caption-box">
+                <div class="caption-header">AI EXPLANATION</div>
+                <span id="caption-text">System is scanning for suspicious patterns. Waiting for transaction...</span>
+            </div>
+        </div>
+
+        <div id="network-graph"></div>
+    </div>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        let currentLang = 'en';
+        let storyTimers = []; 
+        let currentAudio = null; 
+        
+        // --- 2. DATASETS ---
+        const initialNodes = [
+            {id: 1, label: "👤", level: 0, color: '#3b82f6', shape: 'box', font: {size: 60, color:'white'}},
+            {id: 2, label: "👥", level: 0, color: '#3b82f6', shape: 'box', font: {size: 60, color:'white'}, opacity: 0.3},
+            {id: 4, label: "🏦", level: 1, color: '#64748b', shape: 'box', font: {size: 60, color:'white'}}, 
+            {id: 6, label: "❓", level: 2, color: '#64748b', shape: 'box', font: {size: 60, color:'white'}}
+        ];
+
+        const initialEdges = [
+            {id: 'e1', from: 1, to: 4, arrows: 'to', color: {color:'#334155'}, dashes: true},
+            {id: 'e2', from: 2, to: 4, arrows: 'to', color: {color:'#334155'}, dashes: true},
+            {id: 'e3', from: 4, to: 6, arrows: 'to', color: {color:'#334155'}, dashes: true}
+        ];
+
+        let nodes = new vis.DataSet(initialNodes);
+        let edges = new vis.DataSet(initialEdges);
+        let network = null;
+
+        // --- 3. GRAPH SETUP ---
+        setTimeout(() => {
+            const container = document.getElementById('network-graph');
+            const data = { nodes: nodes, edges: edges };
+            const options = {
+                layout: { hierarchical: { direction: 'LR', sortMethod: 'directed', levelSeparation: 300, nodeSpacing: 200 } },
+                physics: false,
+                nodes: { borderWidth: 2, shadow: true, font: { face: 'Roboto', multi: true } },
+                edges: { width: 2, smooth: { type: 'cubicBezier', forceDirection: 'horizontal' } },
+                interaction: { zoomView: true, dragView: true }
+            };
+            network = new vis.Network(container, data, options);
+            network.fit();
+            
+            // Check LocalStorage after small delay to ensure voices are loading
+            setTimeout(checkLocalStorage, 500); 
+        }, 100);
+
+        // --- 4. INTEGRATION LOGIC ---
+        function checkLocalStorage() {
+            // First check for Graph Trigger
+            const triggerGraph = localStorage.getItem('sahayak_trigger_graph');
+            
+            // Then check for Receipt
+            const receiptData = localStorage.getItem('sahayak_receipt_data');
+            if (receiptData) {
+                renderReceipt(JSON.parse(receiptData));
+                localStorage.removeItem('sahayak_receipt_data');
+            }
+
+            // Trigger Red Alert if needed (DO THIS LAST to ensure receipt is rendered first)
+            if (triggerGraph === 'true') {
+                triggerRedAlert();
+                localStorage.removeItem('sahayak_trigger_graph');
+            }
+        }
+
+        function renderReceipt(data) {
+            const container = document.getElementById('receipt-container');
+            const defaultStats = document.getElementById('default-stats');
+            defaultStats.style.display = 'none';
+
+            const isHardBlock = data.reason.includes("CRITICAL");
+            let btnHtml = isHardBlock 
+                ? `<button class="btn-receipt btn-close" onclick="closeReceipt()">CLOSE & REPORT</button>`
+                : `<button class="btn-receipt btn-close" onclick="closeReceipt()">ABORT</button>
+                   <button class="btn-receipt btn-ignore" onclick="closeReceipt()">IGNORE & PAY</button>`;
+
+            let statusHtml = isHardBlock 
+                ? `<div style="color:#d32f2f; font-weight:bold; margin-top:5px;">🚫 TRANSACTION BLOCKED</div>`
+                : `<div style="margin-top:5px;">Projected Balance: <strong>₹${data.balance}</strong></div>`;
+
+            container.innerHTML = `
+                <div class="receipt-card">
+                    <div class="receipt-title">🛡️ Intercepted Receipt</div>
+                    <div class="receipt-row"><span>Account Age:</span> <b>${data.metaAge} Days</b></div>
+                    <div class="receipt-row"><span>Velocity:</span> <b>${data.metaVelocity}</b></div>
+                    <div class="receipt-row"><span>Source:</span> <b>${data.metaSource}</b></div>
+                    <div class="receipt-risk">${data.reason}</div>
+                    ${statusHtml}
+                    <div class="receipt-actions">${btnHtml}</div>
+                </div>
+            `;
+        }
+
+        function closeReceipt() {
+            document.getElementById('receipt-container').innerHTML = "";
+            document.getElementById('default-stats').style.display = 'block';
+            resetSystem();
+        }
+
+        // --- 5. THE STORY ENGINE ---
+        const storyBoard = {
+            en: [
+                { text: "Critical Alert! Mule Account Detected.", focus: 4, edgeHighlight: null, delay: 0 },
+                { text: "Money is flowing from the victim...", focus: 1, edgeHighlight: 'e1', delay: 3500 },
+                { text: "Straight to a known Criminal Boss.", focus: 6, edgeHighlight: 'e3', delay: 7000 }
+            ],
+            hi: [
+                { text: "Rukiye! Wo account ek jaal hai.", focus: 4, edgeHighlight: null, delay: 0 },
+                { text: "Aapka paisa bahar ja raha hai...", focus: 1, edgeHighlight: 'e1', delay: 3000 },
+                { text: "Aur seedha apradhi boss ke paas ja raha hai.", focus: 6, edgeHighlight: 'e3', delay: 6000 }
+            ],
+            ta: [
+                { text: "நிறுத்துங்கள்! அந்த கணக்கு ஒரு பொறி.", focus: 4, edgeHighlight: null, delay: 0 },
+                { text: "உங்கள் பணம் வெளியேறுகிறது...", focus: 1, edgeHighlight: 'e1', delay: 3000 },
+                { text: "அது நேரடியாக குற்றவாளி முதலாளியிடம் செல்கிறது.", focus: 6, edgeHighlight: 'e3', delay: 6000 }
+            ]
+        };
+
+        function playStory(lang) {
+            // STOP EVERYTHING FIRST
+            storyTimers.forEach(timer => clearTimeout(timer));
+            storyTimers = [];
+            if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+            window.speechSynthesis.cancel();
+
+            // Setup
+            const steps = storyBoard[lang];
+            
+            // If Tamil, play MP3
+            if (lang === 'ta') { 
+                currentAudio = new Audio('alert_ta.mp3'); 
+                currentAudio.play().catch(e => {
+                    console.log("Auto-play blocked, user interaction needed");
+                });
+            }
+
+            // Queue Steps
+            steps.forEach((step, index) => {
+                let t = setTimeout(() => {
+                    typeWriterText(step.text);
+                    if (lang !== 'ta') speakNative(step.text, lang);
+                    highlightNode(step.focus);
+                    if(step.edgeHighlight) animateSpark(step.edgeHighlight);
+                }, step.delay);
+                storyTimers.push(t);
+            });
+        }
+
+        // --- 6. TRIGGER LOGIC ---
+        function triggerRedAlert() {
+            document.body.classList.add('alert-mode');
+            document.getElementById('status-badge').innerText = "THREAT DETECTED";
+            document.getElementById('stat-threat').querySelector('.stat-val').innerText = "CRITICAL";
+
+            nodes.update([
+                {id: 4, label: "🕵️‍♂️", color: '#f97316', font:{size: 70}}, 
+                {id: 6, label: "🦹‍♂️", color: '#ef4444', font:{size: 80}}
+            ]);
+            edges.update([
+                {id: 'e1', color: {color:'#7f1d1d'}, width: 3, dashes: false},
+                {id: 'e3', color: {color:'#7f1d1d'}, width: 3, dashes: false}
+            ]);
+            
+            // Force English start immediately
+            currentLang = 'en';
+            playStory('en');
+        }
+
+        // --- HELPER FUNCTIONS ---
+        function animateSpark(edgeId) {
+             edges.update([{id: 'e1', color: {color:'#7f1d1d'}, width: 3, shadow:false}, {id: 'e3', color: {color:'#7f1d1d'}, width: 3, shadow:false}]);
+             edges.update({id: edgeId, color: {color: 'white'}, width: 10, shadow: { color: 'white', size: 20, x: 0, y: 0 }});
+        }
+
+        function highlightNode(nodeId) {
+            const allNodes = nodes.get();
+            const updates = allNodes.map(n => {
+                let isTarget = (n.id === nodeId);
+                return { id: n.id, color: isTarget ? '#f97316' : (n.id === 6 ? '#ef4444' : '#1e293b'), font: { size: isTarget ? 80 : 60 }, borderWidth: isTarget ? 5 : 2, shadow: isTarget ? { color: '#f97316', size: 25 } : false };
+            });
+            nodes.update(updates);
+            network.focus(nodeId, { scale: 1.1, animation: { duration: 1000, easingFunction: 'easeInOutQuad' }});
+        }
+
+        function speakNative(text, lang) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            if (lang === 'hi') { utterance.lang = 'hi-IN'; const v = voices.find(v => v.lang.includes('hi')); if (v) utterance.voice = v; } else { utterance.lang = 'en-US'; }
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function typeWriterText(text) {
+            const el = document.getElementById('caption-text'); el.innerHTML = ""; let i = 0;
+            const timer = setInterval(() => { if (i < text.length) { el.innerHTML += text.charAt(i); i++; } else { clearInterval(timer); } }, 30);
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.btn').forEach(b => { if (!b.classList.contains('btn-reset')) b.classList.remove('active'); });
+            event.target.classList.add('active');
+            
+            // Immediately Restart Story if Alert is Active
+            if(document.body.classList.contains('alert-mode')) {
+                playStory(currentLang);
+            }
+        }
+
+        function resetSystem() {
+            storyTimers.forEach(timer => clearTimeout(timer));
+            storyTimers = [];
+            if (currentAudio) { currentAudio.pause(); }
+            window.speechSynthesis.cancel();
+            
+            isStoryPlaying = false;
+            document.body.classList.remove('alert-mode');
+            document.getElementById('status-badge').innerText = "SYSTEM ACTIVE";
+            document.getElementById('caption-text').innerText = "System is scanning for suspicious patterns...";
+            document.getElementById('stat-threat').querySelector('.stat-val').innerText = "SECURE";
+            document.getElementById('receipt-container').innerHTML = "";
+            document.getElementById('default-stats').style.display = 'block';
+            
+            nodes.clear(); edges.clear();
+            nodes.add(initialNodes); edges.add(initialEdges);
+            network.fit();
+        }
+
+        // Voice Loading Fix
+        window.speechSynthesis.onvoiceschanged = () => {};
+    </script>
+</body>
+</html>

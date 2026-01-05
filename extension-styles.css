@@ -1,0 +1,50 @@
+/* --- CLEAN BUTTON STYLES --- */
+.sahayak-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-right: 10px; 
+}
+
+/* --- THE HEAVY BUTTON STATE --- */
+.sahayak-btn-heavy {
+    background-color: #333 !important; 
+    border: 2px solid #ff4b4b !important; 
+    cursor: not-allowed; 
+    transform: scale(0.98);
+}
+
+.sahayak-fill-bar {
+    position: absolute; top: 0; left: 0; height: 100%; width: 0%;
+    background-color: #ff4b4b; z-index: 0; transition: width 3s linear;
+}
+
+.sahayak-btn-text { position: relative; z-index: 1; }
+
+/* --- THE RECEIPT MODAL --- */
+#sahayak-receipt-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9); z-index: 99999;
+    display: flex; justify-content: center; align-items: center;
+}
+
+.receipt-paper {
+    background: #fff; width: 350px; padding: 25px; border-radius: 5px;
+    box-shadow: 0 0 30px rgba(255, 75, 75, 0.4);
+    font-family: 'Courier New', Courier, monospace; 
+    text-align: center;
+    border-top: 5px solid #ff4b4b;
+}
+
+.receipt-risk-text { color: #d32f2f; font-weight: bold; font-size: 14px; margin: 15px 0; border: 1px dashed red; padding: 5px;}
+.future-balance { font-size: 32px; color: #d32f2f; font-weight: bold; margin: 10px 0; }
+.receipt-actions { display: flex; justify-content: space-between; margin-top: 20px; }
+.btn-proceed { background: #ff4b4b; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 3px;}
+.btn-cancel { background: #eee; border: none; padding: 10px 20px; cursor: pointer; border-radius: 3px;}

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to HDFC Bank NetBanking</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Using Inter font for modern look that matches typically clean banking UIs -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="logo-area">
+            <!-- HDFC Logo Placeholder / Text -->
+            <div class="logo-box">
+                <span class="logo-sq"></span>
+                <span class="logo-text">HDFC BANK</span>
+            </div>
+        </div>
+        <div class="header-links">
+            <span>Customer Care</span>
+            <span>Find Nearest Branch</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        
+        <!-- Left Section: Security Banner -->
+        <section class="security-section">
+            <div class="security-card">
+                <div class="security-header">
+                    <h2>Stay Safe</h2>
+                    <p>Secure Banking Tips</p>
+                </div>
+                <ul class="security-tips">
+                    <li>
+                        <div class="icon-box">🔒</div>
+                        <div class="text-box">
+                            <strong>Always check the URL</strong>
+                            <p>Ensure it starts with https://</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="icon-box">🛡️</div>
+                        <div class="text-box">
+                            <strong>Keep your password safe</strong>
+                            <p>Never share your IPIN (Password) with anyone.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="icon-box">📱</div>
+                        <div class="text-box">
+                            <strong>Beware of Phishing</strong>
+                            <p>We never ask for OTP/PIN over phone/SMS/Email.</p>
+                        </div>
+                    </li>
+                </ul>
+                <div class="security-footer">
+                    <a href="#">Read more security tips &rsaquo;</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Section: Fund Transfer Form -->
+        <section class="transaction-section">
+            <div class="login-box">
+                <div class="login-header">
+                    <h1>Fund Transfer</h1>
+                    <div class="underline"></div>
+                </div>
+
+                <form id="transfer-form" onsubmit="event.preventDefault();">
+                    
+                    <div class="form-group">
+                        <label for="account-input">Payee Account Number</label>
+                        <div class="input-wrapper">
+                            <input required type="text" id="account-input" placeholder="Enter Account Number" maxlength="18" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount-input">Amount (₹)</label>
+                        <div class="input-wrapper">
+                            <span class="currency-symbol">₹</span>
+                            <input type="number" id="amount-input" placeholder="0.00" required>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="bank-submit-btn">Transfer Now</button>
+                    </div>
+
+                    <div class="form-footer">
+                        <p>By clicking Transfer, you agree to the <a href="#">Terms & Conditions</a>.</p>
+                    </div>
+
+                </form>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="main-footer">
+        <p>&copy; Copyright HDFC Bank Ltd. Terms and Conditions apply. <br> Best viewed in Edge, Chrome, Safari, and Firefox.</p>
+    </footer>
+
+</body>
+</html>
