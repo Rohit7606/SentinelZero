@@ -70,11 +70,15 @@ SentinelZero uses a **"Guardian Extension" Architecture**. Unlike bank-side syst
 ## 📸 System Visuals
 
 ### 1. The "Sahayak" Intelligence Report (Intervention)
+
 *The extension overlays the banking site to warn the user of "High Hesitation" (Coercion Risk) and blocks the transfer.*
+
 <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/7793a226-3d93-41f6-8538-4c08aa219200" />
 
 ### 2. Mule Account Detection
+
 *Real-time flagging of a suspicious account number before the user can click "Pay".*
+
 <img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/cc86c64a-639f-4f14-9834-8a2268d32075" />
 
 ---
